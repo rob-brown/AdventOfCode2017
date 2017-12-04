@@ -17,16 +17,16 @@ defmodule AdventOfCode.Spiral do
   end
 
   defp next_values({{x, y}, {:up, magnitude}}) do
-    for n <- 1..magnitude, do: {x, y + n}
+    1..magnitude |> Stream.map(& {x, y + &1})
   end
   defp next_values({{x, y}, {:down, magnitude}}) do
-    for n <- 1..magnitude, do: {x, y - n}
+    1..magnitude |> Stream.map(& {x, y - &1})
   end
   defp next_values({{x, y}, {:left, magnitude}}) do
-    for n <- 1..magnitude, do: {x - n, y}
+    1..magnitude |> Stream.map(& {x - &1, y})
   end
   defp next_values({{x, y}, {:right, magnitude}}) do
-    for n <- 1..magnitude, do: {x + n, y}
+    1..magnitude |> Stream.map(& {x + &1, y})
   end
 
   defp next_acc({{x, y}, {:up, magnitude}}) do
