@@ -10,20 +10,13 @@ defmodule AdventOfCode.Day5B do
   defp execute(z = %ZipList{current: 0}, n) do
     z |> ZipList.set_current(1) |> execute(n + 1)
   end
-  defp execute(z = %ZipList{current: value}, n) when value > 0 do
-    if ZipList.can_advance?(z, value) do
-      z |> ZipList.set_current(augment_jump(value)) |> ZipList.advance(value) |> execute(n + 1)
-    else
-      n + 1
-    end 
+  defp execute(z = %ZipList{current: value, remaining: r}, n) when value > 0 and value <= length(r) do
+    z |> ZipList.set_current(augment_jump(value)) |> ZipList.advance(value) |> execute(n + 1)
   end
-  defp execute(z = %ZipList{current: value}, n) when value < 0 do
-    if ZipList.can_retreat?(z, abs(value)) do
-      z |> ZipList.set_current(augment_jump(value)) |> ZipList.retreat(abs(value)) |> execute(n + 1)
-    else
-      n + 1
-    end
+  defp execute(z = %ZipList{current: value, previous: p}, n) when value < 0 and abs(value) <= length(p) do
+    z |> ZipList.set_current(augment_jump(value)) |> ZipList.retreat(abs(value)) |> execute(n + 1)
   end
+  defp execute(_, n), do: n + 1
 
   defp augment_jump(n) when n < 3, do: n + 1
   defp augment_jump(n), do: n - 1

@@ -20,14 +20,6 @@ defmodule ZipList do
 
   def remaining?(%__MODULE__{remaining: remaining}), do: remaining != []
 
-  def can_advance?(%__MODULE__{remaining: remaining}, n) do
-    n <= Enum.count(remaining)
-  end
-
-  def can_retreat?(%__MODULE__{previous: previous}, n) do
-    n <= Enum.count(previous)
-  end
-
   def advance(z = %__MODULE__{remaining: []}), do: z
   def advance(z = %__MODULE__{remaining: [remaining | rest]}) do
     %__MODULE__{previous: [z.current | z.previous], current: remaining, remaining: rest}
