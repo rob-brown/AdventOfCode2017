@@ -1,4 +1,4 @@
-defmodule AdventOfCode.Day5B do
+defmodule AdventOfCode.Day5B.ZipList do
 
   def steps(input) do
     input
@@ -35,3 +35,39 @@ defmodule AdventOfCode.Day5B do
     |> steps
   end
 end
+
+defmodule AdventOfCode.Day5B.Map do
+
+  def steps(input) do
+    input
+    |> Stream.with_index
+    |> Stream.map(fn {x, y} -> {y, x} end)
+    |> Enum.into(%{})
+    |> execute(0, 0)
+  end
+
+  defp execute(map, index, n) do
+    case Map.get(map, index) do
+      nil ->
+        n
+      value when value >= 3 ->
+        map |> Map.put(index, value - 1) |> execute(index + value, n + 1)
+      value ->
+        map |> Map.put(index, value + 1) |> execute(index + value, n + 1)
+    end
+  end
+
+  def test do
+    10 = steps([0, 3, 0, 1, -3])
+    IO.puts "Test Passed"
+  end
+
+  def solve do
+    "day_5_input.txt"
+    |> Path.expand(__DIR__)
+    |> File.stream!
+    |> Stream.map(& &1 |> String.trim |> String.to_integer)
+    |> steps
+  end
+end
+
