@@ -1,22 +1,19 @@
 defmodule AdventOfCode.Day6B do
 
   def cycle_size(input) do
-    cycle_size(input, 0, Map.new)
+    input
+    |> Stream.with_index
+    |> Stream.map(fn {x, y} -> {y, x} end)
+    |> Map.new
+    |> cycle_size(0, Map.new)
   end
 
   defp cycle_size(banks, n, history) do
-    {max, index} = banks |> Stream.with_index |> Enum.max_by(& elem(&1, 0))
+    {index, max} = banks |> Enum.max_by(fn {n, x} -> {x, -n} end)
     new_banks = 
       banks 
-      |> Stream.with_index 
-      |> Stream.map(fn {x, y} -> {y, x} end) 
-      |> Map.new
       |> Map.put(index, 0)
       |> spread(max, rem(index + 1, Enum.count(banks))) 
-      |> Enum.to_list
-      |> Enum.sort_by(fn {n, _} -> n end)
-      |> Enum.map(fn {_, v} -> v end) 
-
 
     case Map.get(history, new_banks) do
       nil ->
