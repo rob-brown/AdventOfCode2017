@@ -1,25 +1,25 @@
 defmodule AdventOfCode.Day9A do
 
   def score(input) do
-    process(input, %{total: 0, stack: [0]}, :normal).total
+    process(input, %{total: 0, depth: 0}, :normal).total
   end
 
-  defp process(<<>>, result, _), do: result
+  defp process("", result, _), do: result
   defp process(<<"!", _, rest::binary>>, result, :in_garbage) do
     process rest, result, :in_garbage
   end
-  defp process(<<"<", rest::binary>>, result, :normal) do
+  defp process("<" <> rest, result, :normal) do
     process rest, result, :in_garbage
   end
-  defp process(<<">", rest::binary>>, result, :in_garbage) do
+  defp process(">" <> rest, result, :in_garbage) do
     process rest, result, :normal
   end
-  defp process(<<"{", rest::binary>>, r = %{stack: [head | tail]}, :normal) do
-    new_result = %{r | stack: [head + 1, head | tail]}
+  defp process("{" <> rest, r = %{depth: depth}, :normal) do
+    new_result = %{r | depth: depth + 1}
     process rest, new_result, :normal
   end
-  defp process(<<"}", rest::binary>>, r = %{total: total, stack: [head | tail]}, :normal) do
-    new_result = %{r | total: total + head, stack: tail}
+  defp process("}" <> rest, r = %{total: total, depth: depth}, :normal) do
+    new_result = %{r | total: total + depth, depth: depth - 1}
     process rest, new_result, :normal
   end
   defp process(<<_, rest::binary>>, result, s) do

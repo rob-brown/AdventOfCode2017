@@ -4,21 +4,21 @@ defmodule AdventOfCode.Day9B do
     process(input, %{total: 0, stack: [0], garbage: 0}, :normal).garbage
   end
 
-  defp process(<<>>, result, _), do: result
+  defp process("", result, _), do: result
   defp process(<<"!", _, rest::binary>>, result, :in_garbage) do
     process rest, result, :in_garbage
   end
-  defp process(<<"<", rest::binary>>, result, :normal) do
+  defp process("<" <> rest, result, :normal) do
     process rest, result, :in_garbage
   end
-  defp process(<<">", rest::binary>>, result, :in_garbage) do
+  defp process(">" <> rest, result, :in_garbage) do
     process rest, result, :normal
   end
-  defp process(<<"{", rest::binary>>, r = %{stack: [head | tail]}, :normal) do
+  defp process("{" <> rest, r = %{stack: [head | tail]}, :normal) do
     new_result = %{r | stack: [head + 1, head | tail]}
     process rest, new_result, :normal
   end
-  defp process(<<"}", rest::binary>>, r = %{total: total, stack: [head | tail]}, :normal) do
+  defp process("}" <> rest, r = %{total: total, stack: [head | tail]}, :normal) do
     new_result = %{r | total: total + head, stack: tail}
     process rest, new_result, :normal
   end
