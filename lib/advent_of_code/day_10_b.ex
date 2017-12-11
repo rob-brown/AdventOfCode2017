@@ -9,7 +9,7 @@ defmodule AdventOfCode.Day10B do
     0..255 
     |> Enum.to_list 
     |> shuffle(string_64, 0, 0) 
-    |> dense_hash([])
+    |> dense_hash()
     |> Stream.map(&<<&1>>) 
     |> Enum.into("") 
     |> Base.encode16 
@@ -18,27 +18,29 @@ defmodule AdventOfCode.Day10B do
 
   defp shuffle(list, [], _, _), do: list
   defp shuffle(list, [stride | rest], index, skip) do
-    with length = Enum.count(list),
-      new_index = rem(index + stride + skip, length),
-      map = list |> Stream.with_index |> Stream.map(fn {x, y} -> {y, x} end) |> Map.new
-    do
-      list ++ list
-      |> Enum.slice(index..(index + stride - 1)) 
-      |> Enum.reverse 
-      |> Stream.with_index(index) 
-      |> Stream.map(fn {x, n} -> {x, rem(n, length)} end)
-      |> Enum.reduce(map, fn {x, n}, acc -> Map.put(acc, n, x) end) 
-      |> Enum.sort_by(&elem &1, 0) 
-      |> Enum.map(&elem &1, 1)
-      |> shuffle(rest, new_index, skip + 1)
-    end
+    list
+    |> shift(index)
+    |> twist(stride)
+    |> shift(-index)
+    |> shuffle(rest, rem(index + stride + skip, length(list)), skip + 1)
   end
 
-  defp dense_hash([], result), do: Enum.reverse(result)
-  defp dense_hash(bytes, result) do
-    {chunk, rest} = Enum.split bytes, 16
-    value = Enum.reduce chunk, 0, &Bitwise.bxor/2
-    dense_hash rest, [value | result]
+  defp dense_hash(bytes) do
+    bytes |> Stream.chunk_every(16) |> Enum.map(fn x -> Enum.reduce(x, 0, &Bitwise.bxor/2) end)
+  end
+
+  defp shift(list, 0), do: list
+  defp shift(list, offset) when offset < 0 do
+    shift list, length(list) + offset
+  end
+  defp shift(list, offset) do
+    {head, tail} = Enum.split(list, offset)
+    tail ++ head
+  end
+
+  defp twist(list, stride) do
+    {chunk, tail} = Enum.split(list, stride)
+    Enum.reverse chunk, tail
   end
 
   def test do
