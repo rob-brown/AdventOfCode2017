@@ -10,7 +10,7 @@ defmodule AdventOfCode.Day13B do
   end
 
   defp attempt(scanners, delay) do
-    if Enum.any?(scanners, & collision &1, delay) do
+    if Enum.any?(scanners, (& collision &1, delay)) do
       attempt scanners, delay + 1
     else
       delay
