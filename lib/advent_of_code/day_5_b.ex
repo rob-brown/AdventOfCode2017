@@ -36,7 +36,7 @@ defmodule AdventOfCode.Day5B.ZipList do
   end
 end
 
-defmodule AdventOfCode.Day5B.Map do
+defmodule AdventOfCode.Day5B do
 
   def steps(input) do
     input

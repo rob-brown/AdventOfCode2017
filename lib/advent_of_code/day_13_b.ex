@@ -5,7 +5,7 @@ defmodule AdventOfCode.Day13B do
     |> Stream.reject(& &1 == "")
     |> Stream.map(&String.trim/1)
     |> Stream.map(& String.split &1, ": ")
-    |> Stream.map(fn [depth, range] -> {String.to_integer(depth), String.to_integer(range)} end)
+    |> Enum.map(fn x -> x |> Enum.map(&String.to_integer/1) |> List.to_tuple end)
     |> attempt(0)
   end
 

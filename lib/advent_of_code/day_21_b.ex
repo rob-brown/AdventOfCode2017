@@ -49,7 +49,6 @@ defmodule AdventOfCode.Day21B do
 
   defp expand(grid, _, 0), do: grid
   defp expand(grid, rules, iterations) do
-    IO.puts "Expansions left: #{iterations}"
     grid
     |> divide
     |> Stream.map(fn {{x, y}, g} -> {{x, y}, expand_chunk(g, rules)} end)
@@ -199,22 +198,6 @@ defmodule AdventOfCode.Day21B do
   end
   def grid_to_string(%{{0, 0} => a, {1, 0} => b, {0, 1} => c, {1, 1} => d}) do
     [a, b, c, d] |> Enum.join
-  end
-
-  def pmap(items, fun) do
-    ref = make_ref()
-    me = self()
-    items
-    |> Enum.map(& spawn fn -> send me, {self(), ref, fun.(&1)} end)
-    |> Enum.map(& receive do {^&1, ^ref, result} -> result end)
-  end
-  
-  def pmap_unordered(items, fun) do
-    ref = make_ref()
-    me = self()
-    items
-    |> Enum.map(& spawn fn -> send me, { ref, fun.(&1)} end)
-    |> Enum.map(fn _ -> receive do {^ref, result} -> result end end)
   end
 
   def test do
